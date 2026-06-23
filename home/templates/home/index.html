@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StepFix</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Inter, Arial, sans-serif;
+        }
+
+        body{
+            background:#F8FAFC;
+            color:#1E293B;
+            padding:40px;
+        }
+
+        .container{
+            max-width:1000px;
+            margin:auto;
+        }
+
+        .hero{
+            text-align:center;
+            margin-bottom:35px;
+        }
+
+        .hero h1{
+            color:#2563EB;
+            font-size:3rem;
+            margin-bottom:10px;
+        }
+
+        .hero p{
+            color:#64748B;
+            font-size:1.1rem;
+        }
+
+        .input-card{
+            background:white;
+            padding:25px;
+            border-radius:18px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.05);
+            margin-bottom:25px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:8px;
+            font-weight:600;
+        }
+
+        input,
+        textarea,
+        select{
+            width:100%;
+            padding:14px;
+            border:1px solid #CBD5E1;
+            border-radius:12px;
+            margin-bottom:18px;
+            font-size:15px;
+        }
+
+        textarea{
+            min-height:180px;
+            resize:vertical;
+        }
+
+        button{
+            width:100%;
+            background:#2563EB;
+            color:white;
+            border:none;
+            padding:15px;
+            border-radius:12px;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        button:hover{
+            opacity:0.92;
+        }
+
+        .results{
+            display:grid;
+            gap:18px;
+        }
+
+        .card{
+            background:white;
+            border-radius:18px;
+            padding:20px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .card h2{
+            margin-bottom:12px;
+            font-size:1.1rem;
+        }
+
+        .mistake{
+            border-left:6px solid #F59E0B;
+        }
+
+        .why{
+            border-left:6px solid #2563EB;
+        }
+
+        .concept{
+            border-left:6px solid #8B5CF6;
+        }
+
+        .correct{
+            border-left:6px solid #16A34A;
+        }
+
+        .practice{
+            border-left:6px solid #0EA5E9;
+        }
+
+        .content{
+            white-space:pre-wrap;
+            line-height:1.6;
+        }
+
+        .feedback-btn {
+    background: #2563EB;
+    color: white;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.feedback-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+
+.feedback-btn:active {
+    transform: scale(0.98);
+}
+ 
+    
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="hero">
+        <h1>StepFix</h1>
+        <p>Learn from mistakes, not just answers.</p>
+    </div>
+
+    <div class="input-card">
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Subject</label>
+            <select name="subject">
+                <option>Mathematics</option>
+                <option>Physics</option>
+                <option>Chemistry</option>
+                <option>Biology</option>
+                <option>Computer Science</option>
+            </select>
+
+            <label>Question</label>
+            <textarea
+                name="question"
+                placeholder="Paste the question here..."
+            ></textarea>
+
+            <label>Your Solution / Answer</label>
+            <textarea
+                name="answer"
+                placeholder="Paste your steps here..."
+            ></textarea>
+
+            <button type="submit">
+                Analyze My Work
+            </button>
+
+        </form>
+
+    </div>
+
+    {% if result %}
+
+<div class="results">
+
+    <div class="card mistake">
+        <h2>📝 Mistake Found</h2>
+        <div class="content">
+            {{ result.mistake }}
+        </div>
+    </div>
+
+    <div class="card why">
+        <h2>💡 Why It's Wrong</h2>
+        <div class="content">
+            {{ result.why }}
+        </div>
+    </div>
+
+    <div class="card concept">
+        <h2>📚 Concept</h2>
+        <div class="content">
+            {{ result.concept }}
+        </div>
+    </div>
+
+    <div class="card correct">
+        <h2>✅ Correct Approach</h2>
+        <div class="content">
+            {{ result.correct }}
+        </div>
+    </div>
+
+    <div class="card practice">
+        <h2>🎯 Practice Question</h2>
+        <div class="content">
+            {{ result.practice }}
+        </div>
+    </div>
+
+</div>
+
+{% endif %}
+
+</div>
+
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSfRV25kNTCP3vZ6BUtx5XZ5RY1nhMZYGOFDiByfaThrCPjZBg/viewform?usp=header" target="_blank" class="feedback-btn">
+    
+        Was this helpful? Give feedback (10 sec)
+</a>
+
+</body>
+</html>
