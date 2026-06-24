@@ -6,96 +6,42 @@ MODEL_NAME = "google/flan-t5-large"
 
 # create client safely
 client = InferenceClient(token=settings.HF_TOKEN)
-
-
 def analyze_with_ai(question, answer):
-    print("MODEL:", MODEL_NAME, flush=True)
-    print("TOKEN EXISTS:", bool(settings.HF_TOKEN), flush=True)
-    prompt = f"""
-You are StepFix.
-
-Analyze the student's work.
-
-Return ONLY in this format:
-
-[MISTAKE]
-...
-
-[WHY]
-...
-
-[CONCEPT]
-...
-
-[CORRECT]
-...
-
-[PRACTICE]
-...
-
-Question:
-{question}
-
-Student Solution:
-{answer}
-"""
+    import requests
 
     try:
-        # ✅ CORRECT HF METHOD (NOT chat.completions)
-        response = client.text_generation(
-            model=MODEL_NAME,
-            prompt=prompt,
-            max_new_tokens=1000,
-        )
+        r = requests.get("https://huggingface.co", timeout=10)
 
-        return response.strip()
+        return f"""
+[MISTAKE]
+HF Website Status: {r.status_code}
+
+[WHY]
+Test
+
+[CONCEPT]
+Test
+
+[CORRECT]
+Test
+
+[PRACTICE]
+Test
+"""
+
     except Exception as e:
-        import traceback
+        return f"""
+[MISTAKE]
+{repr(e)}
 
-        print("=" * 50, flush=True)
-        print("HF ERROR OCCURRED", flush=True)
-        print("ERROR TYPE:", type(e).__name__, flush=True)
-        print("ERROR:", str(e), flush=True)
-        print(traceback.format_exc(), flush=True)
-        print("=" * 50, flush=True)
+[WHY]
 
-        return f"[MISTAKE]\nAI Error: {str(e)}"
+[CONCEPT]
 
-def parse_response(text):
-    result = {
-        "mistake": "",
-        "why": "",
-        "concept": "",
-        "correct": "",
-        "practice": ""
-    }
+[CORRECT]
 
-    current = None
-
-    for line in text.splitlines():
-        line = line.strip()
-
-        if line == "[MISTAKE]":
-            current = "mistake"
-            continue
-        elif line == "[WHY]":
-            current = "why"
-            continue
-        elif line == "[CONCEPT]":
-            current = "concept"
-            continue
-        elif line == "[CORRECT]":
-            current = "correct"
-            continue
-        elif line == "[PRACTICE]":
-            current = "practice"
-            continue
-
-        if current:
-            result[current] += line + "\n"
-
-    return result
-
+[PRACTICE]
+"""
 
 def index(request):
     result = None
