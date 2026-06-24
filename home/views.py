@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.conf import settings
 from huggingface_hub import InferenceClient
 
-MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
+MODEL_NAME = "microsoft/Phi-3-mini-4k-instruct"
 
 # create client safely
 client = InferenceClient(token=settings.HF_TOKEN)
