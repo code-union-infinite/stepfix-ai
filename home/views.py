@@ -7,7 +7,6 @@ MODEL_NAME = "google/flan-t5-large"
 # create client safely
 client = InferenceClient(token=settings.HF_TOKEN)
 
-
 def analyze_with_ai(question, answer):
     prompt = f"""
 You are StepFix.
