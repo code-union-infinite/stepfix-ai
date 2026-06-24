@@ -7,7 +7,10 @@ MODEL_NAME = "google/flan-t5-large"
 # create client safely
 client = InferenceClient(token=settings.HF_TOKEN)
 
+
 def analyze_with_ai(question, answer):
+    print("MODEL:", MODEL_NAME, flush=True)
+    print("TOKEN EXISTS:", bool(settings.HF_TOKEN), flush=True)
     prompt = f"""
 You are StepFix.
 
@@ -46,10 +49,17 @@ Student Solution:
         )
 
         return response.strip()
-
     except Exception as e:
-        return f"[MISTAKE]\nAI Error: {str(e)}"
+        import traceback
 
+        print("=" * 50, flush=True)
+        print("HF ERROR OCCURRED", flush=True)
+        print("ERROR TYPE:", type(e).__name__, flush=True)
+        print("ERROR:", str(e), flush=True)
+        print(traceback.format_exc(), flush=True)
+        print("=" * 50, flush=True)
+
+        return f"[MISTAKE]\nAI Error: {str(e)}"
 
 def parse_response(text):
     result = {
