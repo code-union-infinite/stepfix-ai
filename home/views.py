@@ -52,6 +52,12 @@ def index(request):
 
         if question and answer:
             ai_response = analyze_with_ai(question, answer)
-            result = parse_response(ai_response)
+            result = result = {
+    "mistake": ai_response,
+    "why": "",
+    "concept": "",
+    "correct": "",
+    "practice": ""
+}
 
     return render(request, "home/index.html", {"result": result})
