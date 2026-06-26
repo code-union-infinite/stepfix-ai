@@ -2,37 +2,62 @@ from django.shortcuts import render
 from django.conf import settings
 from huggingface_hub import InferenceClient
 
-MODEL_NAME = "google/flan-t5-large"
+MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 
-# create client safely
-client = InferenceClient(token=settings.HF_TOKEN)
+client = InferenceClient(
+    api_key=settings.HF_TOKEN
+)
+
+
 def analyze_with_ai(question, answer):
-    import requests
+    prompt = f"""
+You are StepFix.
 
-    try:
-        r = requests.get("https://huggingface.co", timeout=10)
+Analyze the student's work.
 
-        return f"""
+Return ONLY in this exact format.
+
 [MISTAKE]
-HF Website Status: {r.status_code}
+...
 
 [WHY]
-Test
+...
 
 [CONCEPT]
-Test
+...
 
 [CORRECT]
-Test
+...
 
 [PRACTICE]
-Test
+...
+
+Question:
+{question}
+
+Student Solution:
+{answer}
 """
+
+    try:
+        response = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.2,
+            max_tokens=1200,
+        )
+
+        return response.choices[0].message.content.strip()
 
     except Exception as e:
         return f"""
 [MISTAKE]
-{repr(e)}
+AI Error: {str(e)}
 
 [WHY]
 
@@ -42,6 +67,50 @@ Test
 
 [PRACTICE]
 """
+
+
+def parse_response(text):
+    result = {
+        "mistake": "",
+        "why": "",
+        "concept": "",
+        "correct": "",
+        "practice": ""
+    }
+
+    current = None
+
+    for line in text.splitlines():
+        line = line.strip()
+
+        if line == "[MISTAKE]":
+            current = "mistake"
+            continue
+
+        if line == "[WHY]":
+            current = "why"
+            continue
+
+        if line == "[CONCEPT]":
+            current = "concept"
+            continue
+
+        if line == "[CORRECT]":
+            current = "correct"
+            continue
+
+        if line == "[PRACTICE]":
+            current = "practice"
+            continue
+
+        if current:
+            result[current] += line + "\n"
+
+    for key in result:
+        result[key] = result[key].strip()
+
+    return result
+
 
 def index(request):
     result = None
@@ -52,12 +121,20 @@ def index(request):
 
         if question and answer:
             ai_response = analyze_with_ai(question, answer)
-            result = result = {
-    "mistake": ai_response,
-    "why": "",
-    "concept": "",
-    "correct": "",
-    "practice": ""
-}
+            result = parse_response(ai_response)
+        else:
+            result = {
+                "mistake": "Please enter both the question and your solution.",
+                "why": "",
+                "concept": "",
+                "correct": "",
+                "practice": ""
+            }
 
-    return render(request, "home/index.html", {"result": result})
+    return render(
+        request,
+        "home/index.html",
+        {
+            "result": result
+        }
+    )
