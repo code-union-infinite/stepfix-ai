@@ -37,7 +37,7 @@ SECRET_KEY = 'django-insecure-xunw%%q@pjm(7)!2t5n2ih9%-((fh38k2km4vccirf1w-lw1+(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["stepfix-ai.onrender.com"]
 
 
 # Application definition

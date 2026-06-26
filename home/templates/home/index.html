@@ -148,9 +148,45 @@
 .feedback-btn:active {
     transform: scale(0.98);
 }
+.loader{
+    width:55px;
+    height:55px;
+    border:6px solid #ddd;
+    border-top:6px solid #4f46e5;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+#loading{
+    text-align:center;
+    margin-top:30px;
+}
+
+#loading p{
+    margin-top:15px;
+    color:#666;
+}
  
     
     </style>
+
+<script>
+    document.getElementById("stepfix-form").addEventListener("submit", function(){
+    
+        document.getElementById("loading").style.display = "block";
+    
+        document.getElementById("analyze-btn").disabled = true;
+    
+        document.getElementById("analyze-btn").innerHTML = "Analyzing...";
+    });
+    </script>
 </head>
 
 <body>
@@ -164,35 +200,28 @@
 
     <div class="input-card">
 
-        <form method="POST">
+        <form method="POST" id="stepfix-form">
             {% csrf_token %}
-
-            <label>Subject</label>
-            <select name="subject">
-                <option>Mathematics</option>
-                <option>Physics</option>
-                <option>Chemistry</option>
-                <option>Biology</option>
-                <option>Computer Science</option>
-            </select>
-
-            <label>Question</label>
+        
             <textarea
                 name="question"
-                placeholder="Paste the question here..."
-            ></textarea>
-
-            <label>Your Solution / Answer</label>
+                placeholder="Paste the question..."
+                required></textarea>
+        
             <textarea
                 name="answer"
-                placeholder="Paste your steps here..."
-            ></textarea>
-
-            <button type="submit">
-                Analyze My Work
+                placeholder="Paste your solution..."
+                required></textarea>
+        
+            <button id="analyze-btn" type="submit">
+                Analyze
             </button>
-
         </form>
+        
+        <div id="loading" style="display:none;">
+            <div class="loader"></div>
+            <p>StepFix is analyzing your work...</p>
+        </div>
 
     </div>
 

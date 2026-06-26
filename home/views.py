@@ -15,7 +15,7 @@ You are StepFix.
 
 Analyze the student's work.
 
-Return ONLY in this exact format.
+Return ONLY in this format.
 
 [MISTAKE]
 ...
@@ -43,10 +43,7 @@ Student Solution:
         response = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
+                {"role": "user", "content": prompt}
             ],
             temperature=0.2,
             max_tokens=1200,
@@ -54,20 +51,37 @@ Student Solution:
 
         return response.choices[0].message.content.strip()
 
-    except Exception as e:
-        return f"""
+    except TimeoutError:
+        return """
 [MISTAKE]
-AI Error: {str(e)}
+The AI took too long to respond.
 
 [WHY]
+Our servers may be busy.
 
 [CONCEPT]
+Please try again in a few seconds.
 
 [CORRECT]
 
 [PRACTICE]
 """
 
+    except Exception:
+        return """
+[MISTAKE]
+We couldn't reach the AI.
+
+[WHY]
+The AI service is temporarily unavailable.
+
+[CONCEPT]
+Please refresh the page and try again.
+
+[CORRECT]
+
+[PRACTICE]
+"""
 
 def parse_response(text):
     result = {
